@@ -1,0 +1,28 @@
+
+function Install-Exchange
+{
+    if (Get-Process SETUP.com -ErrorAction silentlycontinue) {
+        Start-Sleep -s 60
+        Install-Exchange
+    }
+    else {
+        $credential = New-Object System.Management.Automation.PsCredential("<%= @user %>@<%= scope.lookupvar("::domain") %>", (ConvertTo-SecureString "<%= @password %>" -AsPlainText -Force))
+        <% 
+          cmd = "
+            cd #{@source_dir};
+            .\\SETUP.com /mode:#{@mode} /role:#{@name}" 
+  
+          @options.each do |key,value|
+            if defined?(value) and !value.eql?('') and !value.eql?('nil')
+              cmd += " /#{key}:'`\"#{value}`\"'" 
+            end 
+          end
+  
+          cmd += " >> C:\\Windows\\Temp\\#{@name}_install.log"
+        %>
+
+        Start-Process powershell.exe -Credential $credential -NoNewWindow -ArgumentList "-noprofile -command &{<%= cmd %>}"
+    }
+}
+
+Install-Exchange

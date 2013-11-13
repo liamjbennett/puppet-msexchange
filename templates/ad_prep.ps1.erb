@@ -1,0 +1,15 @@
+$credential = New-Object System.Management.Automation.PsCredential("<%= @user %>@<%= @domain %>", (ConvertTo-SecureString "<%= @password %>" -AsPlainText -Force))
+
+<% cmds = []
+   cmds << "Start-Process #{@source_dir}\\setup.com /PrepareSchema"
+   cmds << "Start-Process #{@source_dir}\\setup.com /PrepareAD /OrganizationName: #{@organisation_name}"    
+   cmds << "Start-Process #{@source_dir}\\setup.com /PrepareDomain"
+   
+   if @upgrade.eql?('true')
+     cmds << "Start-Process #{@source_dir}\\setup.com /PrepareExchangeLegacyPermissions"
+   end
+%>
+
+<% cmds.each do |cmd| %>
+Start-Process powershell.exe -Credential $credential -NoNewWindow -ArgumentList "-noprofile -command &{<%= cmd %>}"
+<% end %>
