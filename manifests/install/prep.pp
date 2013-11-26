@@ -12,17 +12,16 @@ class msexchange::install::prep(
     }
     
     #TODO: Set-service NetTcpPortSharing -startuptype automatic
+    #TODO: Make sure IPv6 is enabled
     
+    #TODO: fix this only-if
     exec { "prepare AD for exchange":
         command  => template('msexchange/ad_prep.ps1.erb'),
         provider => powershell,
-        #onlyif => '' -- determin if this has already run? What if an existing exch is in the domain? What if you run it twice?
+        #onlyif => '' -- determine if this has already run? What if an existing exch is in the domain? What if you run it twice?
     }
     
     #Using custom parser functions to create registry entry which makes sure that the source_dir server is added into the local intranet zone
-    
-    notify { "source_dir is ${source_dir}": }
-    
     $source_host = hostname($source_dir)
     $source_domain = domain($source_dir)
     

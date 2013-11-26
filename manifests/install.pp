@@ -22,10 +22,8 @@ class msexchange::install(
        org_name   => $msexchange::params::organization_name,
        source_dir => $msexchange::params::source_dir
     }
-    -> msexchange::install::role::prereq { $package_roles:
-      user     => $user,
-      domain   => $domain,
-      password => $password,
+    -> class { 'msexchange::install::role::prereq':
+      package_roles => $package_roles
     }
     -> msexchange::install::role::install { $package_roles:
       package_ensure => $package_ensure,

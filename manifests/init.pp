@@ -23,6 +23,7 @@ class msexchange(
   validate_bool($upgrade)
   validate_hash($options)
 
+  anchor { 'msexchange::begin': } -> 
   class { 'msexchange::install':
     package_ensure => $package_ensure,
     package_roles  => $package_roles,
@@ -30,5 +31,9 @@ class msexchange(
     domain         => $domain,
     password       => $password,
     upgrade        => $upgrade
-  }
+  } -> 
+  class { 'msexchange::services':
+     package_roles => $package_roles
+  } -> 
+  anchor { 'msexchange::end': }
 }

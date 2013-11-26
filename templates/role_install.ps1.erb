@@ -2,7 +2,7 @@
 function Install-Exchange
 {
     if (Get-Process SETUP.com -ErrorAction silentlycontinue) {
-        Start-Sleep -s 60
+        Start-Sleep -s 10
         Install-Exchange
     }
     else {
@@ -21,7 +21,7 @@ function Install-Exchange
           cmd += " >> C:\\Windows\\Temp\\#{@name}_install.log"
         %>
 
-        Start-Process powershell.exe -Credential $credential -NoNewWindow -ArgumentList "-noprofile -command &{<%= cmd %>}"
+        Start-Process powershell.exe -Credential $credential -Wait -NoNewWindow -ArgumentList "-noprofile -command &{<%= cmd %>}"
     }
 }
 
